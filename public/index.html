@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Docker To-Do App</title>
+</head>
+<body>
+  <h1>My To-Do List</h1>
+  <input id="todoInput" placeholder="Enter a task"/>
+  <button onclick="addTodo()">Add</button>
+  <ul id="todoList"></ul>
+
+  <script>
+    async function addTodo() {
+      const todo = document.getElementById("todoInput").value;
+      await fetch("/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ todo })
+      });
+      loadTodos();
+    }
+
+    async function loadTodos() {
+      const res = await fetch("/list");
+      const data = await res.json();
+      const list = document.getElementById("todoList");
+      list.innerHTML = "";
+      data.todos.forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = t;
+        list.appendChild(li);
+      });
+    }
+
+    loadTodos();
+  </script>
+</body>
+</html>
